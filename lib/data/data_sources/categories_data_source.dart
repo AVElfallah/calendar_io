@@ -18,6 +18,20 @@ class CategoriesDataSource {
     }
   }
 
+  Future<List<EventCategoryModel>?> getCategoriesByListOfIDs(
+      List<String?>? ids) async {
+    try {
+      var listOfData = dataSource.getValues();
+      return listOfData
+              ?.map<EventCategoryModel>((v) => EventCategoryModel.fromJson(v))
+              .where((element) => ids!.contains(element.categoryID))
+              .toList() ??
+          [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<EventCategoryModel> addCategory(EventCategoryModel? category) async {
     final id = IdGeneratorHelper.generateAUniqID();
     final modelWithId = category?.copyWith(

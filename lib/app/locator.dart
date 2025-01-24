@@ -41,5 +41,8 @@ void setupLocator() {
   locator.registerLazySingleton(() => DeleteEventCategoryUseCase(locator()));
   locator
       .registerLazySingleton(() => DeleteAllEventCategoriesUseCase(locator()));
+
+  locator.registerLazySingleton<GetEventCategoriesByIDsUseCase>(
+      () => GetEventCategoriesByIDsUseCase(locator()));
   // Event Categories Locators [END]
 }

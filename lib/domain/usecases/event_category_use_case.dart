@@ -63,3 +63,16 @@ class DeleteAllEventCategoriesUseCase extends UseCase<bool, NoParms> {
     return result.fold((l) => left(l), (r) => right(r));
   }
 }
+
+class GetEventCategoriesByIDsUseCase
+    extends UseCase<List<EventCategory>, List<String?>> {
+  final EventCategoryRepository repository;
+
+  GetEventCategoriesByIDsUseCase(this.repository);
+  @override
+  Future<Either<Failures, List<EventCategory>>> call(
+      List<String?> prams) async {
+    final result = await repository.getCategoriesByListOfIDs(prams);
+    return result.fold((l) => left(l), (r) => right(r));
+  }
+}

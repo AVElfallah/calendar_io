@@ -65,4 +65,15 @@ class EventCategoryRepositoryImpl implements EventCategoryRepository {
       return left(e);
     }
   }
+
+  @override
+  Future<Either<Failures, List<EventCategory>>> getCategoriesByListOfIDs(
+      List<String?>? id) async {
+    try {
+      final categories = await dataSource.getCategoriesByListOfIDs(id);
+      return right(categories?.map((e) => e.toEventCategory()).toList() ?? []);
+    } on StorageFailure catch (e) {
+      return left(e);
+    }
+  }
 }

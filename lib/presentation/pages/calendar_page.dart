@@ -108,19 +108,30 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                     currentDay.value = selectedDay;
                   },
                   loadEventsForDisabledDays: true,
-                  eventLoader: controller.setEventLoaders,
+                  eventLoader: (c) {
+                    return controller.eventNotes
+                        .where((element) =>
+                            element.date!.day == c.day &&
+                            element.date!.month == c.month &&
+                            element.date!.year == c.year)
+                        .map((e) => e)
+                        .toList();
+                  },
                 );
               },
             ),
             const Spacer(),
-            Expanded(
-              flex: 10,
-              child: ListView(
-                children: const [
-                  EventCardWidget(),
-                  EventCardWidget(),
-                  EventCardWidget(),
-                ],
+            ValueListenableBuilder(
+              valueListenable: currentDay,
+              builder: (context, value, child) => Expanded(
+                flex: 10,
+                child: ListView(
+                  children: [
+                    for (var item in controller.eventNotes)
+                      if (item.date!.day == value.day)
+                        EventCardWidget(note: item)
+                  ],
+                ),
               ),
             )
           ],
@@ -135,20 +146,20 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             shape: const CircleBorder(),
             child: const Icon(Icons.add, color: Colors.white, size: 30),
             onPressed: () {
-              _scaffoldKey.currentState
-                  ?.showBottomSheet(
-                    (ctx) => ProviderScope(
-                        overrides: [eventNoteController],
-                        child: const AddNoteBottomSheet()),
-                    elevation: 50,
-                    enableDrag: true,
-                  )
-                  .closed
-                  .then((v) {
+              final bottomCtrl = _scaffoldKey.currentState?.showBottomSheet(
+                (ctx) => ProviderScope(
+                    overrides: [eventNoteController],
+                    child: const AddNoteBottomSheet()),
+                elevation: 50,
+                enableDrag: true,
+              );
+              bottomCtrl?.closed.then((v) {
                 changeState(() {
                   isBottomSheetOpen = false;
+                  controller.loadEventNotes();
                 });
               });
+            
 
               changeState(
                 () {

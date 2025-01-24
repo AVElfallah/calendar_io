@@ -1,4 +1,5 @@
 import 'package:calendar_io/app/extensions/string_extensions.dart';
+import 'package:calendar_io/data/models/event_category_model.dart';
 import 'package:calendar_io/domain/entities/event_note.dart';
 
 class EventNoteModel extends EventNote {
@@ -10,7 +11,7 @@ class EventNoteModel extends EventNote {
   final String? eventDate;
   final String? eventStartTime;
   final String? eventEndTime;
-  final List<String?>? eventCategoriesIDs;
+  final List<EventCategoryModel?>? eventCategories;
 
   EventNoteModel({
     this.eventID,
@@ -19,9 +20,9 @@ class EventNoteModel extends EventNote {
     this.eventDate,
     this.eventStartTime,
     this.eventEndTime,
-    this.eventCategoriesIDs,
+    this.eventCategories,
   }) : super(
-          categoriesIDs: eventCategoriesIDs,
+          categories: eventCategories,
           id: eventID,
           name: eventName,
           note: eventNote,
@@ -36,7 +37,7 @@ class EventNoteModel extends EventNote {
       'eventDate': eventDate,
       'eventStartTime': eventStartTime,
       'eventEndTime': eventEndTime,
-      'eventCategoriesIDs': eventCategoriesIDs,
+      'eventCategoriesIDs': eventCategories?.map((e) => e?.toJson()).toList(),
     };
   }
 
@@ -48,7 +49,9 @@ class EventNoteModel extends EventNote {
       eventDate: map['eventDate'] as String,
       eventStartTime: map['eventStartTime'] as String,
       eventEndTime: map['eventEndTime'] as String,
-      eventCategoriesIDs: map['eventCategoriesIDs'],
+      eventCategories: (map['eventCategoriesIDs'] as List<dynamic>)
+          .map((e) => EventCategoryModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -60,7 +63,9 @@ class EventNoteModel extends EventNote {
       eventDate: DateTimeConverter.fromDate(note.date),
       eventStartTime: DateTimeConverter.fromTime(note.start), // note.startTime,
       eventEndTime: DateTimeConverter.fromTime(note.end),
-      eventCategoriesIDs: note.categoriesIDs,
+      eventCategories: note.categories
+          ?.map((e) => EventCategoryModel.fromEventCategory(e!))
+          .toList(),
     );
   }
 
@@ -71,7 +76,7 @@ class EventNoteModel extends EventNote {
         date: eventDate?.toDate(),
         start: eventStartTime?.toTime(),
         end: eventEndTime?.toTime(),
-        categoriesIDs: eventCategoriesIDs,
+        categories: eventCategories?.map((e) => e?.toEventCategory()).toList(),
       );
 
   EventNoteModel copyWith({
@@ -81,7 +86,7 @@ class EventNoteModel extends EventNote {
     String? eventDate,
     String? eventStartTime,
     String? eventEndTime,
-    List<String?>? eventCategoriesIDs,
+    List<EventCategoryModel?>? eventCategoriesIDs,
   }) {
     return EventNoteModel(
       eventID: eventID ?? this.eventID,
@@ -90,7 +95,7 @@ class EventNoteModel extends EventNote {
       eventDate: eventDate ?? this.eventDate,
       eventStartTime: eventStartTime ?? this.eventStartTime,
       eventEndTime: eventEndTime ?? this.eventEndTime,
-      eventCategoriesIDs: eventCategoriesIDs ?? this.eventCategoriesIDs,
+      eventCategories: eventCategoriesIDs ?? this.eventCategories,
     );
   }
 }

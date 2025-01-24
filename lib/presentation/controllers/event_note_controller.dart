@@ -104,14 +104,13 @@ class EventNoteController extends ChangeNotifier {
     if (eventDateController.text.isEmpty) return;
     if (eventStartTimeController.text.isEmpty) return;
     if (eventEndTimeController.text.isEmpty) return;
-    if (selectedCategories.isEmpty) return;
     var eventNote = EventNote(
       name: eventNameController.text,
       note: eventNoteController.text,
       date: eventDateController.text.toDate(),
       start: eventStartTimeController.text.toTime(),
       end: eventEndTimeController.text.toTime(),
-      categoriesIDs: selectedCategories.map((e) => e.id).toList(),
+      categories: selectedCategories,
     );
     createEventNoteUseCase(
       eventNote,

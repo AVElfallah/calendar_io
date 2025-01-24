@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
+import 'event_category.dart';
+
 class EventNote extends Equatable {
   final String? id;
   final String? name;
@@ -8,7 +10,7 @@ class EventNote extends Equatable {
   final DateTime? date;
   final TimeOfDay? start;
   final TimeOfDay? end;
-  final List<String?>? categoriesIDs;
+  final List<EventCategory?>? categories;
 
   const EventNote(
       {this.id,
@@ -17,8 +19,8 @@ class EventNote extends Equatable {
       this.note,
       this.end,
       this.start,
-      this.categoriesIDs});
+      this.categories});
 
   @override
-  List<Object?> get props => [id, name, date, note, end, start, categoriesIDs];
+  List<Object?> get props => [id, name, date, note, end, start, categories];
 }

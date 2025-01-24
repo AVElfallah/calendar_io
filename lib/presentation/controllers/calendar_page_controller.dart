@@ -15,15 +15,12 @@ class CalendarPageController extends ChangeNotifier {
     debugPrint('CalendarPageController created');
   }
   final getEventNotesLocator = locator<GetEventsNotesUseCase>();
+
   List<EventNote> _eventNotes = [];
 
   List<EventNote> get eventNotes => _eventNotes;
 
   int get eventNotesCount => _eventNotes.length;
-
-  List<dynamic> setEventLoaders(DateTime day) {
-    return _eventNotes.where((element) => element.date == day).toList();
-  }
 
   void loadEventNotes({void Function()? onSuccess, void Function()? onFail}) {
     // call the use case to get the event notes
@@ -37,6 +34,7 @@ class CalendarPageController extends ChangeNotifier {
         onFail?.call();
       }, (r) {
         _eventNotes = r;
+        debugPrint('loadEventNotes success');
         notifyListeners();
         onSuccess?.call();
       });

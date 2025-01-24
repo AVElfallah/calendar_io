@@ -7,11 +7,15 @@ class NotesDataSource {
 
   Future<List<EventNoteModel>?> getNotes() async {
     try {
-      var listOfData = dataSource.getValues();
-      return listOfData
-              ?.map<EventNoteModel>((v) => EventNoteModel.fromJson(v))
-              .toList() ??
+      List listOfData = dataSource.getValues().toList();
+      final backList = listOfData.map((v) {
+            print('is data');
+            print(v);
+            print('is data');
+            return EventNoteModel.fromJson(v);
+          }).toList() ??
           [];
+      return backList;
     } catch (e) {
       rethrow;
     }
