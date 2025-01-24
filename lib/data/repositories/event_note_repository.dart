@@ -46,7 +46,7 @@ class EventNoteRepositoryImpl extends EventNoteRepository {
   Future<Either<Failures, List<EventNote>>> getNotes() async {
     try {
       final notes = await dataSource.getNotes();
-      return right(notes.map((e) => e.toEventNote()).toList());
+      return right(notes?.map((e) => e.toEventNote()).toList() ?? []);
     } on StorageFailure catch (e) {
       return left(e);
     }

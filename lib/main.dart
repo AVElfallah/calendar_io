@@ -1,3 +1,4 @@
+import 'package:calendar_io/app/extensions/context_extensions.dart';
 import 'package:calendar_io/app/locator.dart';
 import 'package:calendar_io/core/utils/colors_helper.dart';
 import 'package:calendar_io/app/routes/routes_manager.dart';
@@ -24,6 +25,20 @@ class MainApp extends StatelessWidget {
         MediaQuery.of(context).textScaler.scale(fontScale).toDouble();
     return MaterialApp(
       theme: ThemeData(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF735BF2),
+            foregroundColor: Colors.white,
+            minimumSize: Size(double.infinity, context.height * .06),
+            textStyle: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: GoogleFonts.roboto(
               fontSize: textScaleFactor(18),

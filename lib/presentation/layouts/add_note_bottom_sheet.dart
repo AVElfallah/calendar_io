@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:calendar_io/app/extensions/input_decoration_extensions.dart';
 import 'package:calendar_io/app/extensions/context_extensions.dart';
 
-class AddNoteBottomSheet extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
+
+import '../controllers/event_note_controller.dart';
+import '../widgets/event_category_widget.dart';
+
+class AddNoteBottomSheet extends ConsumerWidget {
   const AddNoteBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final height = context.height;
-
+    final watchProvider = ref.watch(eventNoteController);
     return Container(
       height: height * .55,
       decoration: const BoxDecoration(
@@ -43,6 +49,7 @@ class AddNoteBottomSheet extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextFormField(
+                    controller: watchProvider.eventNameController,
                     style: Theme.of(context).textTheme.bodyMedium,
                     decoration: const IDecorationWithHintText(
                       'Event Name',
@@ -53,6 +60,7 @@ class AddNoteBottomSheet extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: TextFormField(
+                    controller: watchProvider.eventNoteController,
                     maxLines: 3,
                     style: Theme.of(context).textTheme.bodyMedium,
                     decoration:
@@ -62,6 +70,7 @@ class AddNoteBottomSheet extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: TextFormField(
+                    controller: watchProvider.eventDateController,
                     style: Theme.of(context).textTheme.bodyMedium,
                     readOnly: true,
                     decoration: IDecorationWithHintText(
@@ -80,6 +89,7 @@ class AddNoteBottomSheet extends StatelessWidget {
                     children: [
                       Flexible(
                         child: TextFormField(
+                          controller: watchProvider.eventStartTimeController,
                           style: Theme.of(context).textTheme.bodyMedium,
                           readOnly: true,
                           decoration: IDecorationWithHintText(
@@ -109,8 +119,8 @@ class AddNoteBottomSheet extends StatelessWidget {
                 ),
                 SwitchListTile.adaptive(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  value: true,
-                  onChanged: (v) {},
+                  value: watchProvider.isReminder,
+                  onChanged: watchProvider.toggleReminder,
                   title: Text(
                     'Reminds me',
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -131,48 +141,22 @@ class AddNoteBottomSheet extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.spaceEvenly,
                     children: [
-                      Chip(
-                        backgroundColor: const Color.fromARGB(7, 116, 91, 242),
-                        avatar: const CircleAvatar(
-                          backgroundColor: ColorsHelper.appMainColorPurple,
-                          foregroundColor: Colors.white,
-                          radius: 10,
-                          child: CircleAvatar(
-                            radius: 4,
-                          ),
+                      for (var category in watchProvider.categories)
+                        EventCategoryChipWidget(
+                          category: category,
+                          onSelectChange: (isSelected) {
+                            if (isSelected) {
+                              watchProvider.addSelectedCategory(category);
+                            } else {
+                              watchProvider.removeSelectedCategory(category);
+                            }
+                          },
                         ),
-                        label: Text(
-                          'Brainstorm',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                      const Chip(
-                        backgroundColor: Color.fromARGB(28, 0, 179, 131),
-                        avatar: CircleAvatar(
-                          backgroundColor: Color(0xff00B383),
-                          foregroundColor: Colors.white,
-                          radius: 10,
-                          child: CircleAvatar(
-                            radius: 4,
-                          ),
-                        ),
-                        label: Text('Design'),
-                      ),
-                      const Chip(
-                        backgroundColor: Color.fromARGB(28, 0, 149, 255),
-                        avatar: CircleAvatar(
-                          backgroundColor: Color(0xff0095FF),
-                          foregroundColor: Colors.white,
-                          radius: 10,
-                          child: CircleAvatar(
-                            radius: 4,
-                          ),
-                        ),
-                        label: Text('Workout'),
-                      ),
                     ],
                   ),
                 ),
@@ -181,9 +165,73 @@ class AddNoteBottomSheet extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
-                        onPressed: () {},
-                        label: const Text('Add new'),
-                        icon: const Icon(Icons.add)),
+                      onPressed: () {
+                        watchProvider.toggleAddCategoryVisibility();
+                      },
+                      label: watchProvider.isAddCategory
+                          ? const Text('Cancel')
+                          : const Text('Add new'),
+                      icon: watchProvider.isAddCategory
+                          ? const Icon(Icons.cancel)
+                          : const Icon(Icons.add),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: watchProvider.isAddCategory,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            ColorPicker(
+                              color: watchProvider.categoryColor,
+                              onColorChanged: watchProvider.changeCategoryColor,
+                              pickersEnabled: const {
+                                ColorPickerType.both: false,
+                                ColorPickerType.primary: false,
+                                ColorPickerType.accent: true,
+                                ColorPickerType.bw: false,
+                                ColorPickerType.custom: false,
+                                ColorPickerType.wheel: false,
+                              },
+                            ).showPickerDialog(
+                              context,
+                            );
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: watchProvider.categoryColor,
+                            radius: 20,
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 10,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: context.width * .75,
+                          child: TextFormField(
+                            controller:
+                                watchProvider.eventCategoryNameController,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            decoration: IDecorationWithHintText(
+                              'Category Type Name here...',
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  watchProvider.addCategory();
+                                },
+                                icon: const Icon(
+                                  Icons.save,
+                                  color: ColorsHelper.appMainColorPurple,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -192,18 +240,6 @@ class AddNoteBottomSheet extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF735BF2),
-                      foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, height * .06),
-                      textStyle: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
                     child: const Text('Create Event'),
                   ),
                 ),

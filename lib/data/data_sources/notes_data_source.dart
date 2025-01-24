@@ -5,9 +5,9 @@ import 'package:calendar_io/data/models/event_note_model.dart';
 class NotesDataSource {
   final dataSource = StorageDataSource.i.notesStorage;
 
-  Future<List<EventNoteModel>> getNotes() async {
-    final events = dataSource.getValues()<List<Map<String, dynamic>>>();
-    return events!.map<EventNoteModel>(EventNoteModel.fromJson).toList();
+  Future<List<EventNoteModel>?> getNotes() async {
+    final events = dataSource.getValues<List<Map<String, dynamic>>?>();
+    return events?.map<EventNoteModel>(EventNoteModel.fromJson).toList() ?? [];
   }
 
   Future<void> addNote(EventNoteModel model) async {

@@ -1,28 +1,40 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:calendar_io/presentation/controllers/calendar_page_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../core/utils/colors_helper.dart';
+import '../controllers/event_note_controller.dart';
 import '../layouts/add_note_bottom_sheet.dart';
 import '../widgets/event_card_widget.dart';
 
-class CalendarPage extends StatefulWidget {
+class CalendarPage extends ConsumerStatefulWidget {
   const CalendarPage({super.key});
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  ConsumerState<CalendarPage> createState() => _CalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _CalendarPageState extends ConsumerState<CalendarPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(calendarPageController).loadEventNotes();
+    });
+  }
+
   final ValueNotifier<DateTime> currentDay = ValueNotifier(DateTime.now());
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool isBottomSheetOpen = false;
   @override
   Widget build(BuildContext context) {
+    final controller = ref.read(calendarPageController);
     return Scaffold(
       key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
@@ -96,10 +108,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     currentDay.value = selectedDay;
                   },
                   loadEventsForDisabledDays: true,
-                  eventLoader: (day) {
-                    //Todo create a marker from events
-                    return [];
-                  },
+                  eventLoader: controller.setEventLoaders,
                 );
               },
             ),
@@ -128,7 +137,9 @@ class _CalendarPageState extends State<CalendarPage> {
             onPressed: () {
               _scaffoldKey.currentState
                   ?.showBottomSheet(
-                    const AddNoteBottomSheet().build,
+                    (ctx) => ProviderScope(
+                        overrides: [eventNoteController],
+                        child: const AddNoteBottomSheet()),
                     elevation: 50,
                     enableDrag: true,
                   )

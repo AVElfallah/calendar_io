@@ -1,25 +1,32 @@
 import 'package:calendar_io/data/data_sources/storage_data_source.dart';
 
+import '../../core/utils/id_generator_helper.dart';
 import '../models/event_category_model.dart';
 
 class CategoriesDataSource {
   final dataSource = StorageDataSource.i.categoriesStorage;
 
-  Future<List<EventCategoryModel>> getCategories() async {
+  Future<List<EventCategoryModel>?> getCategories() async {
     try {
-      var listOfData = dataSource.getValues<List<Map<String, dynamic>>>();
+      var listOfData = dataSource.getValues();
       return listOfData
-          .map<EventCategoryModel>(EventCategoryModel.fromJson)
-          .toList();
+              ?.map<EventCategoryModel>((v) => EventCategoryModel.fromJson(v))
+              .toList() ??
+          [];
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> addCategory(EventCategoryModel? category) async {
+  Future<EventCategoryModel> addCategory(EventCategoryModel? category) async {
+    final id = IdGeneratorHelper.generateAUniqID();
+    final modelWithId = category?.copyWith(
+      categoryID: id,
+    );
     try {
-      await dataSource.writeIfNull(category!.id!, category.toJson());
+      await dataSource.writeIfNull(modelWithId!.id!, modelWithId.toJson());
       await dataSource.save();
+      return modelWithId;
     } catch (e) {
       rethrow;
     }

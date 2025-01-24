@@ -16,13 +16,13 @@ class GetEventCategoriesUseCase extends UseCase<List<EventCategory>, NoParms> {
   }
 }
 
-class AddEventCategoryUseCase extends UseCase<bool, EventCategory> {
+class AddEventCategoryUseCase extends UseCase<EventCategory, EventCategory> {
   final EventCategoryRepository repository;
 
   AddEventCategoryUseCase(this.repository);
 
   @override
-  Future<Either<Failures, bool>> call(EventCategory prams) async {
+  Future<Either<Failures, EventCategory>> call(EventCategory prams) async {
     final result = await repository.addCategory(prams);
     return result.fold((l) => left(l), (r) => right(r));
   }

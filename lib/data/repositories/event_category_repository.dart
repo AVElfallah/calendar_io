@@ -12,12 +12,13 @@ class EventCategoryRepositoryImpl implements EventCategoryRepository {
   EventCategoryRepositoryImpl(this.dataSource);
 
   @override
-  Future<Either<Failures, bool>> addCategory(EventCategory? cat) async {
+  Future<Either<Failures, EventCategory>> addCategory(
+      EventCategory? cat) async {
     try {
       final EventCategoryModel model =
           EventCategoryModel.fromEventCategory(cat!);
-      await dataSource.addCategory(model);
-      return right(true);
+      final backEventAfterAdd = await dataSource.addCategory(model);
+      return right(backEventAfterAdd.toEventCategory());
     } on StorageFailure catch (e) {
       return left(e);
     }
@@ -47,7 +48,7 @@ class EventCategoryRepositoryImpl implements EventCategoryRepository {
   Future<Either<Failures, List<EventCategory>>> getCategories() async {
     try {
       final categories = await dataSource.getCategories();
-      return right(categories.map((e) => e.toEventCategory()).toList());
+      return right(categories?.map((e) => e.toEventCategory()).toList() ?? []);
     } on StorageFailure catch (e) {
       return left(e);
     }
