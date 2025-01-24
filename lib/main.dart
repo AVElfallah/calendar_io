@@ -25,6 +25,27 @@ class MainApp extends StatelessWidget {
         MediaQuery.of(context).textScaler.scale(fontScale).toDouble();
     return MaterialApp(
       theme: ThemeData(
+        datePickerTheme: DatePickerThemeData(
+          backgroundColor: Colors.white,
+          headerForegroundColor: Colors.black,
+          headerBackgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          dayForegroundColor: const WidgetStatePropertyAll(Colors.black),
+          dayStyle: GoogleFonts.roboto(
+            fontSize: textScaleFactor(18),
+            fontWeight: FontWeight.bold,
+          ),
+          weekdayStyle: GoogleFonts.roboto(
+            fontSize: textScaleFactor(18),
+            fontWeight: FontWeight.bold,
+          ),
+          yearStyle: GoogleFonts.roboto(
+            fontSize: textScaleFactor(18),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF735BF2),

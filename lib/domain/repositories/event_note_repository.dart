@@ -7,5 +7,5 @@ abstract class EventNoteRepository {
   Future<Either<Failures, bool>> deleteANoteByID(String? id);
   Future<Either<Failures, bool>> deleteAllNotes();
   Future<Either<Failures, bool>> updateANote(EventNote note);
-  Future<Either<Failures, bool>> createNote(EventNote note);
+  Future<Either<Failures, EventNote>> createNote(EventNote note);
 }

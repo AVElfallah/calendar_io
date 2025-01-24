@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 extension DateTimeConverter on String {
   static String? fromDate(DateTime? d) {
     // date format dd/mm/yyyy => 11/9/2001 like my BD
-    return '${d!.day}/${d.month}/${d.year}';
+    return '${'${d!.day}'.padLeft(2, '0')}/${'${d.month}'.padLeft(2, '0')}/${d.year}';
   }
 
   DateTime? toDate() {
@@ -15,24 +15,20 @@ extension DateTimeConverter on String {
     return DateTime(year, month, day);
   }
 
-  static String? fromTime(DateTime? time) {
+  static String? fromTime(TimeOfDay? time) {
     // time format HH:MM day||night
-    var dayNightString = (time!.hour >= 12) ? 'AM' : 'PM';
+    var dayNightString = time!.period == DayPeriod.am ? 'AM' : 'PM';
     final hour = time.hour > 12 ? time.hour - 12 : time.hour;
 
-    return '$hour:${time.minute} $dayNightString';
+    return '${'$hour'.padLeft(2, '0')}${':' '${time.minute}'.padLeft(2, '0')} $dayNightString';
   }
 
-  DateTime? toTime() {
+  TimeOfDay? toTime() {
     final ls = split(':');
-    final hour = int.parse(ls[0]);
-    final minute = int.parse(ls[1]);
-    return DateTime(
-        0001, //year
-        1, // month
-        1, // day
-        hour,
-        minute);
+    final hour = int.parse(ls[0]) + (ls[1].split(' ')[1] == 'PM' ? 12 : 0);
+    final minute = int.parse(ls[1].split(' ')[0]);
+
+    return TimeOfDay(hour: hour, minute: minute);
   }
 }
 

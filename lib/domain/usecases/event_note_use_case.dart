@@ -17,15 +17,15 @@ class GetEventsNotesUseCase extends UseCase<List<EventNote>, NoParms> {
   }
 }
 
-class AddEventNoteUseCase extends UseCase<bool, EventNote> {
+class AddEventNoteUseCase extends UseCase<EventNote, EventNote> {
   final EventNoteRepository repository;
 
   AddEventNoteUseCase(this.repository);
 
   @override
-  Future<Either<Failures, bool>> call(EventNote prams) async {
+  Future<Either<Failures, EventNote>> call(EventNote prams) async {
     final result = await repository.createNote(prams);
-    return result.fold((l) => left(l), (r) => right(true));
+    return result.fold((l) => left(l), (r) => right(r));
   }
 }
 

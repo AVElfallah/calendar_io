@@ -6,16 +6,24 @@ class NotesDataSource {
   final dataSource = StorageDataSource.i.notesStorage;
 
   Future<List<EventNoteModel>?> getNotes() async {
-    final events = dataSource.getValues<List<Map<String, dynamic>>?>();
-    return events?.map<EventNoteModel>(EventNoteModel.fromJson).toList() ?? [];
+    try {
+      var listOfData = dataSource.getValues();
+      return listOfData
+              ?.map<EventNoteModel>((v) => EventNoteModel.fromJson(v))
+              .toList() ??
+          [];
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> addNote(EventNoteModel model) async {
+  Future<EventNoteModel> addNote(EventNoteModel model) async {
     final id = IdGeneratorHelper.generateAUniqID();
     final modelWithId = model.copyWith(eventID: id);
     try {
       await dataSource.writeIfNull(id, modelWithId.toJson());
       await dataSource.save();
+      return modelWithId;
     } catch (e) {
       rethrow;
     }

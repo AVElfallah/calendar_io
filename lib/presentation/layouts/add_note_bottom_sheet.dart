@@ -76,7 +76,16 @@ class AddNoteBottomSheet extends ConsumerWidget {
                     decoration: IDecorationWithHintText(
                       'Date',
                       suffixIcon: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDatePicker(
+                            context: context,
+                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2300),
+                          ).then((value) {
+                            watchProvider.setDate(value!);
+                          });
+                        },
                         icon: const Icon(Icons.calendar_today),
                       ),
                     ),
@@ -95,7 +104,14 @@ class AddNoteBottomSheet extends ConsumerWidget {
                           decoration: IDecorationWithHintText(
                             'Start Time',
                             suffixIcon: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.now(),
+                                ).then((value) {
+                                  watchProvider.setStartTime(value!);
+                                });
+                              },
                               icon: const Icon(Icons.timer_outlined),
                             ),
                           ),
@@ -103,12 +119,20 @@ class AddNoteBottomSheet extends ConsumerWidget {
                       ),
                       Flexible(
                         child: TextFormField(
+                          controller: watchProvider.eventEndTimeController,
                           style: Theme.of(context).textTheme.bodyMedium,
                           readOnly: true,
                           decoration: IDecorationWithHintText(
                             'End Time',
                             suffixIcon: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.now(),
+                                ).then((value) {
+                                  watchProvider.setEndTime(value!);
+                                });
+                              },
                               icon: const Icon(Icons.timer_outlined),
                             ),
                           ),
@@ -149,6 +173,8 @@ class AddNoteBottomSheet extends ConsumerWidget {
                       for (var category in watchProvider.categories)
                         EventCategoryChipWidget(
                           category: category,
+                          isSelected: watchProvider.selectedCategories
+                              .contains(category),
                           onSelectChange: (isSelected) {
                             if (isSelected) {
                               watchProvider.addSelectedCategory(category);
@@ -238,7 +264,9 @@ class AddNoteBottomSheet extends ConsumerWidget {
                   padding: const EdgeInsets.all(20),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      watchProvider.addEventNote();
+                      print('event added');
+                      // Navigator.pop(context);
                     },
                     child: const Text('Create Event'),
                   ),

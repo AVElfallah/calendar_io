@@ -12,11 +12,11 @@ class EventNoteRepositoryImpl extends EventNoteRepository {
   EventNoteRepositoryImpl(this.dataSource);
 
   @override
-  Future<Either<Failures, bool>> createNote(EventNote note) async {
+  Future<Either<Failures, EventNote>> createNote(EventNote note) async {
     try {
       final EventNoteModel model = EventNoteModel.fromEventNote(note);
-      await dataSource.addNote(model);
-      return right(true);
+      final backModel = await dataSource.addNote(model);
+      return right(backModel.toEventNote());
     } on StorageFailure catch (e) {
       return left(e);
     }

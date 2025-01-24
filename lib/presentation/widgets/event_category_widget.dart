@@ -7,9 +7,14 @@ class EventCategoryChipWidget extends StatefulWidget {
   final EventCategory? category;
   final void Function(bool isSelected)? onSelectChange;
   final void Function()? onDelete;
+  final bool isSelected;
 
   const EventCategoryChipWidget(
-      {super.key, this.category, this.onSelectChange, this.onDelete});
+      {super.key,
+      this.category,
+      this.onSelectChange,
+      this.onDelete,
+      this.isSelected = false});
 
   @override
   State<EventCategoryChipWidget> createState() =>
@@ -18,7 +23,7 @@ class EventCategoryChipWidget extends StatefulWidget {
 
 class _EventCategoryChipWidgetState extends State<EventCategoryChipWidget> {
   bool toggleDelete = false;
-  bool isSelected = false;
+
   @override
   Widget build(BuildContext context) {
     // to check color lim for text color to make it visible
@@ -31,8 +36,7 @@ class _EventCategoryChipWidgetState extends State<EventCategoryChipWidget> {
     final colorLim = blendedColor.computeLuminance();
     return GestureDetector(
       onTap: () {
-        isSelected = !isSelected;
-        widget.onSelectChange?.call(isSelected);
+        widget.onSelectChange?.call(!widget.isSelected);
         setState(() {});
       },
       onLongPress: () {
@@ -44,7 +48,7 @@ class _EventCategoryChipWidgetState extends State<EventCategoryChipWidget> {
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(
             color: widget.category?.color ?? Colors.green,
-            width: isSelected ? 3 : .5,
+            width: widget.isSelected ? 3 : .5,
           ),
         ),
         onDeleted: toggleDelete
