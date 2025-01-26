@@ -27,11 +27,23 @@ A calendar application that allows you to create, edit, and manage day events.
 ## Technologies :
 - **[x]** Flutter 📱
 - **[x]** Dart 🎯
+- **[X]** MVVM 🗃️
+- **[X]** Clean Architecture 👌👍
 - **[x]** GetStorage 🗄️
 - **[x]** Flutter Local Notifications 📬
 - **[x]** GetIT 🧰
 - **[x]** Flutter riverpod 🏞️
 - **[x]** Flutter firebase auth 🔥
 - **[x]** Flutter firebase firestore 🔥
+
+
+## Screenshot :
+- *Splash screen and Add Note*
+
+<div align='center'>
+   <a href="url"><img src="screen_shots/app_shots.gif" align="center" height="600" width="300" ></a>
+</div>
+
+
 
 

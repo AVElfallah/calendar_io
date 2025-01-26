@@ -230,11 +230,13 @@ void main() {
     });
 
     test('Test AddEventCategoryUseCase', () async {
+      // Create a test event category
       EventCategory matcher = const EventCategory(
         name: 'Test Event Category',
         color: Colors.red,
       );
       Object? categoryToTest;
+      // Add the test event category
       final result = await addEventCategoryUseCase(
         matcher,
       );
@@ -242,17 +244,20 @@ void main() {
         (l) => prints(l),
         (r) => categoryToTest = r,
       );
+      // Check if the event category was added
       expect(categoryToTest, isA<EventCategory>(),
           reason: 'AddEventCategoryUseCase failed to add event category');
     });
 
     test('Test GetEventCategoriesUseCase', () async {
       Object? categoryToTest;
+      // Get all event categories
       final result = await getEventCategoriesUseCase(NoParms());
       result.fold(
         (l) => prints(l),
         (r) => categoryToTest = r,
       );
+      // Check if the event categories were retrieved
       expect(categoryToTest, isA<List<EventCategory>>(),
           reason: 'GetEventCategoriesUseCase failed to get event categories');
     });
@@ -262,6 +267,7 @@ void main() {
       name: 'Test Event Category',
       color: Colors.red,
     );
+    // Add a test event category
     final result = await addEventCategoryUseCase(
       matcher,
     );
@@ -273,11 +279,13 @@ void main() {
       },
     );
     Object? deleteResult;
+    // Delete the test event category
     final dResult = await deleteEventCategoryUseCase(categoryToTest.id!);
     dResult.fold(
       (l) => prints(l),
       (r) => deleteResult = r,
     );
+    // Check if the event category was deleted
     expect(deleteResult, isA<bool>(),
         reason: 'DeleteEventCategoryUseCase failed to delete event category');
   });
@@ -287,11 +295,13 @@ void main() {
       color: Colors.red,
     );
     Object? addResult;
+    // Add a test event category
     (await addEventCategoryUseCase(
       matcher,
     ))
         .fold((l) => prints(l), (r) => addResult = r);
     Object? updateResult;
+    // Update the test event category
     final result = await updateEventCategoryUseCase(
         (EventCategoryModel.fromEventCategory(addResult as EventCategory))
           ..copyWith(categoryName: 'updated name'));
@@ -299,16 +309,19 @@ void main() {
       (l) => prints(l),
       (r) => updateResult = r,
     );
+    // Check if the event category was updated
     expect(updateResult, true,
         reason: 'UpdateEventCategoryUseCase failed to update event category');
   });
   test('Test DeleteAllEventCategoriesUseCase', () async {
+    // Delete all event categories
     final result = await deleteAllEventCategoriesUseCase(NoParms());
     Object? deleteResult;
     result.fold(
       (l) => prints(l),
       (r) => deleteResult = r,
     );
+    // Check if all event categories were deleted
     expect(deleteResult, true,
         reason:
             'DeleteAllEventCategoriesUseCase failed to delete all event categories');
