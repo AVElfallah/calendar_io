@@ -9,12 +9,9 @@ class NotesDataSource {
     try {
       List listOfData = dataSource.getValues().toList();
       final backList = listOfData.map((v) {
-            print('is data');
-            print(v);
-            print('is data');
+
             return EventNoteModel.fromJson(v);
-          }).toList() ??
-          [];
+          }).toList();
       return backList;
     } catch (e) {
       rethrow;

@@ -17,6 +17,9 @@ class EventNoteController extends ChangeNotifier {
   EventNoteController() {
     getCategories();
   }
+
+// keys
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 // Text Controllers
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventNoteController = TextEditingController();
@@ -27,6 +30,41 @@ class EventNoteController extends ChangeNotifier {
   final TextEditingController eventCategoryNameController =
       TextEditingController();
 //
+// validations
+String? validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a name';
+    }
+    return null;
+  }
+  String? validateNote(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a note';
+    }
+    return null;
+  }
+  String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a date';
+    }
+
+    return null;
+  }
+  String? validateStartTime(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a start time';
+    }
+    return null;
+  }
+  String? validateEndTime(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an end time';
+    }
+
+    return null;
+  }
+
+
 // locators
 // Category locators
   final GetEventCategoriesUseCase getEventCategoriesUseCase =
@@ -40,8 +78,6 @@ class EventNoteController extends ChangeNotifier {
   final DeleteEventCategoryUseCase deleteEventCategoryUseCase =
       locator.get<DeleteEventCategoryUseCase>();
   // Note locators
-  final GetEventsNotesUseCase getEventsNotesUseCase =
-      locator.get<GetEventsNotesUseCase>();
   final AddEventNoteUseCase createEventNoteUseCase =
       locator.get<AddEventNoteUseCase>();
   final UpdateEventNoteUseCase updateEventNoteUseCase =
@@ -56,7 +92,7 @@ class EventNoteController extends ChangeNotifier {
   bool isReminder = false;
   bool isAddCategory = false;
   List<EventCategory> _categories = [];
-  List<EventCategory> _selectedCategories = [];
+  final List<EventCategory> _selectedCategories = [];
   List<EventCategory> get categories => _categories;
   List<EventCategory> get selectedCategories => _selectedCategories;
   int get selectedCategory => _categories.length;
@@ -98,12 +134,8 @@ class EventNoteController extends ChangeNotifier {
     );
   }
 
-  Future<void> addEventNote() async {
-    if (eventNameController.text.isEmpty) return;
-    if (eventNoteController.text.isEmpty) return;
-    if (eventDateController.text.isEmpty) return;
-    if (eventStartTimeController.text.isEmpty) return;
-    if (eventEndTimeController.text.isEmpty) return;
+  Future<void> addEventNote( {Function? onSuccess ,Function? onFail}) async {
+if(!formKey.currentState!.validate())return;
     var eventNote = EventNote(
       name: eventNameController.text,
       note: eventNoteController.text,
@@ -116,16 +148,11 @@ class EventNoteController extends ChangeNotifier {
       eventNote,
     ).then(
       (result) => result.fold(
-        (l) => l,
+        (l) {
+          onFail?.call();
+        },
         (r) {
-          print('note added');
-          eventNameController.text = '';
-          eventNoteController.text = '';
-          eventDateController.text = '';
-          eventStartTimeController.text = '';
-          eventEndTimeController.text = '';
-          _selectedCategories = [];
-          notifyListeners();
+onSuccess?.call();
         },
       ),
     );
@@ -151,13 +178,11 @@ class EventNoteController extends ChangeNotifier {
 
   void addSelectedCategory(EventCategory category) {
     _selectedCategories.add(category);
-    print(_selectedCategories);
     notifyListeners();
   }
 
   void removeSelectedCategory(EventCategory category) {
     _selectedCategories.remove(category);
-    print(_selectedCategories);
     notifyListeners();
   }
 

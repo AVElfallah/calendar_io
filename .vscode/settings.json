@@ -1,8 +1,16 @@
 {
-    "cSpell.words": [
-        "readmore",
-        "roboto",
-        "usecase",
-        "usecases"
-    ]
+  "cSpell.words": [
+    "apploc",
+    "fpdart",
+    "Parms",
+    "readmore",
+    "riverpod",
+    "roboto",
+    "skeletonizer",
+    "svgs",
+    "usecase",
+    "usecases"
+  ],
+  "avdmanager.sdkPath": "c:\\Users\\TorNew\\AppData\\Local\\Android\\Sdk",
+  "dart.flutterSdkPath": ".fvm/versions/3.22.2"
 }

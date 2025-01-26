@@ -27,6 +27,8 @@ class EventNoteModel extends EventNote {
           name: eventName,
           note: eventNote,
           date: eventDate?.toDate(),
+          start: eventStartTime?.toTime(),
+          end: eventEndTime?.toTime(),
         );
 
   Map<String, dynamic> toJson() {
@@ -95,7 +97,7 @@ class EventNoteModel extends EventNote {
       eventDate: eventDate ?? this.eventDate,
       eventStartTime: eventStartTime ?? this.eventStartTime,
       eventEndTime: eventEndTime ?? this.eventEndTime,
-      eventCategories: eventCategoriesIDs ?? this.eventCategories,
+      eventCategories: eventCategoriesIDs ?? eventCategories,
     );
   }
 }

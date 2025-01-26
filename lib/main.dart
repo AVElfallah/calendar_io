@@ -25,6 +25,10 @@ class MainApp extends StatelessWidget {
         MediaQuery.of(context).textScaler.scale(fontScale).toDouble();
     return MaterialApp(
       theme: ThemeData(
+        floatingActionButtonTheme:const FloatingActionButtonThemeData(
+          backgroundColor: ColorsHelper.appMainBlue,
+          shape: CircleBorder(),
+        ),
         datePickerTheme: DatePickerThemeData(
           backgroundColor: Colors.white,
           headerForegroundColor: Colors.black,
